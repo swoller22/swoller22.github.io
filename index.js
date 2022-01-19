@@ -210,3 +210,60 @@ var selectionSorter = {
         this.currentMin.index = 0
     }
 }
+
+var selectionSorter = {
+    algorithm: 'selection',
+    currentMin: {
+        value: Infinity,
+        index: 0
+    },
+    iTower: 0,
+    jTower: 0,
+    sortNext: function () {
+
+        console.log(`Sorting with iTower: ${this.iTower}, jTower: ${this.jTower}`)
+        if (this.iTower < NUMBER_OF_TOWERS) {
+
+            if (this.jTower < NUMBER_OF_TOWERS) {
+
+                grid.updateColor(towers[this.jTower], "purple")
+                if ( (this.currentMin.index!=this.jTower-1) && this.jTower>=this.iTower+2 ) {
+                    grid.updateColor(towers[this.jTower-1], "blue")
+                }
+
+                if (towers[this.jTower].height < this.currentMin.value) {
+                    grid.updateColor(towers[this.jTower], "cyan")
+                    grid.updateColor(towers[this.currentMin.index], "blue")
+                    this.currentMin.value = towers[this.jTower].height
+                    this.currentMin.index = this.jTower
+                    console.log(`Minimum found! ${this.currentMin.value} at index ${this.currentMin.index}`)
+                }
+
+                this.jTower++
+            } else {
+
+                let tmp = towers[this.iTower].height
+                towers[this.iTower].height = towers[this.currentMin.index].height
+                towers[this.currentMin.index].height = tmp
+
+                grid.addTower(towers[this.iTower], "green")
+                if(this.iTower!=this.currentMin.index) grid.addTower(towers[this.currentMin.index], "blue")
+                grid.updateColor(towers[this.jTower-1], "blue")
+                this.iTower++
+                this.jTower = this.iTower
+                this.currentMin.index = this.iTower
+                this.currentMin.value = Infinity
+            }
+        } else {
+            grid.updateColor(towers[this.iTower-1], "green")
+            clearInterval(intervalId)
+            intervalId = null
+        }
+    },
+    reset: function() {
+        this.iTower = 0
+        this.jTower = 0
+        this.currentMin.value = Infinity
+        this.currentMin.index = 0
+    }
+}
